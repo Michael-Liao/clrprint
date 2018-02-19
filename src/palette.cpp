@@ -5,31 +5,6 @@ Palette::Palette() {
   int pat2[6] = {0,95,135,175,215,255};
   short t=0, j=0, k=0;
   int gray = 8;
-  // for (short i = 0; i < 256; i++) {
-  //   if (i < 16) {
-  //     switch (i%8) {
-  //       case 0: rgb_table[i] = new int [3]{pat1[i],pat1[i],pat1[i]};
-  //       case 1: rgb_table[i] = new int [3]{pat1[i],0,0};
-  //       case 2: rgb_table[i] = new int [3]{0,pat1[i],0};
-  //       case 3: rgb_table[i] = new int [3]{pat1[i],pat1[i],0};
-  //       case 4: rgb_table[i] = new int [3]{0,0,pat1[i]};
-  //       case 5: rgb_table[i] = new int [3]{pat1[i],0,pat1[i]};
-  //       case 6: rgb_table[i] = new int [3]{0,pat1[i],pat1[i]};
-  //       case 7: rgb_table[i] = new int [3]{pat1[i],pat1[i],pat1[i]};
-  //     }
-  //   } else if (i>=16 && i<=231) {
-  //     t = i - 16;
-  //     rgb_table[i] = new int [3]{pat2[k],pat2[j],pat2[t]};
-  //     if (t%6==5) {
-  //       j += j;
-  //     } else if (j%6==5) {
-  //       k += k;
-  //     }
-  //   } else  {
-  //     rgb_table[i] = new int [3]{gray,gray,gray};
-  //     gray += 10;
-  //   }
-  // }
 
   // vector version
   rgb_table.resize(256, std::vector<int>(3,0)); // 256x3 w/ value 0
@@ -37,22 +12,23 @@ Palette::Palette() {
   for (short i = 0; i < 256; i++) {
     if (i < 16) { // system colors
       switch (i%8) {
-        case 0: rgb[0] = pat1[i]; rgb[1] = pat1[i]; rgb[2] = pat1[i];
-        case 1: rgb[0] = pat1[i]; rgb[1] = 0; rgb[2] = 0;
-        case 2: rgb[0] = 0; rgb[1] = pat1[i]; rgb[2] = 0;
-        case 3: rgb[0] = pat1[i]; rgb[1] = pat1[i]; rgb[2] = 0;
-        case 4: rgb[0] = 0; rgb[1] = 0; rgb[2] = pat1[i];
-        case 5: rgb[0] = pat1[i]; rgb[1] = 0; rgb[2] = pat1[i];
-        case 6: rgb[0] = 0; rgb[1] = pat1[i]; rgb[2] = pat1[i];
-        case 7: rgb[0] = pat1[i]; rgb[1] = pat1[i]; rgb[2] = pat1[i];
+        case 0: rgb[0] = pat1[i]; rgb[1] = pat1[i]; rgb[2] = pat1[i]; break;
+        case 1: rgb[0] = pat1[i]; rgb[1] = 0; rgb[2] = 0; break;
+        case 2: rgb[0] = 0; rgb[1] = pat1[i]; rgb[2] = 0; break;
+        case 3: rgb[0] = pat1[i]; rgb[1] = pat1[i]; rgb[2] = 0; break;
+        case 4: rgb[0] = 0; rgb[1] = 0; rgb[2] = pat1[i]; break;
+        case 5: rgb[0] = pat1[i]; rgb[1] = 0; rgb[2] = pat1[i]; break;
+        case 6: rgb[0] = 0; rgb[1] = pat1[i]; rgb[2] = pat1[i]; break;
+        case 7: rgb[0] = pat1[i]; rgb[1] = pat1[i]; rgb[2] = pat1[i]; break;
       }
     } else if (i>=16 && i<=231) { // extra colors
         t = i - 16;
-        rgb[0] = pat2[k]; rgb[1] = pat2[j]; rgb[2] = pat2[t];
+        rgb[0] = pat2[k%6]; rgb[1] = pat2[j%6]; rgb[2] = pat2[t%6];
         if (t%6==5) {
-          j += j;
-        } else if (j%6==5) {
-          k += k;
+          if (j%6==5) {
+            k += 1;
+          }
+          j += 1;
         }
     } else { // black-white gradient
       rgb[0] = gray; rgb[1] = gray; rgb[2] = gray;
@@ -74,8 +50,11 @@ void Palette::setRGB (int r, int g, int b) {
   int xterm_code = rgb2xterm(r,g,b);
   char command[16] = "tput sgr0";
   sprintf(command,"tput setaf %d", xterm_code);
-
   system(command);
+}
+
+void Palette::setColor(int c) {
+
 }
 
 int Palette::rgb2xterm(int r, int g, int b) {
@@ -87,6 +66,7 @@ int Palette::rgb2xterm(int r, int g, int b) {
     d.push_back(std::pow(r_temp,2) + std::pow(g_temp,2) + std::pow(b_temp,2));
   }
   int color_code = std::distance(d.begin(), std::min_element(d.begin(), d.end()));
+  printf("color code %d\n", color_code);
 
   return color_code;
 }

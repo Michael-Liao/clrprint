@@ -16,6 +16,8 @@ int main(int argc, char* argv[]) {
   if (argc > 1) {
     if (strcmp(argv[1],"-rgb")==0) {
       palette.setRGB( atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) );
+    } else if (strcmp(argv[1],"-raw")==0) {
+      palette.setColor( atoi(argv[2]) );
     }
   }
 

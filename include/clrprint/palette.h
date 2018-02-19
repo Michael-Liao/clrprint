@@ -14,7 +14,6 @@ private:
   //                           {  0,  0,255}, {255,  0,255}, {  0,255,255},
   //                           {255,255,255}
   //                         };
-  // int **rgb_table = new int* [256];
   std::vector< std::vector<int> > rgb_table;
 
 public:
@@ -22,6 +21,7 @@ public:
   virtual ~Palette ();
 
   void setRGB (int r, int g, int b);
+  void setColor (int c);
   int rgb2xterm (int r, int g, int b);
   void hsl2rgb (float hue, float sat, float light);
 };
