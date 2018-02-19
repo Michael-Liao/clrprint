@@ -1,5 +1,7 @@
-# build directory
+# build directories
 build
+debug
+release
 
 ## c++ ignores
 # Prerequisites

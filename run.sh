@@ -15,9 +15,10 @@ project_name=$(basename $project_root)
 cd $project_root
 
 function build {
+  build_dir="build"
   # create build directory if not already exist
-  if [[ ! -d ${build_dir} ]]; then
-    mkdir ${project_root}/${build_dir}
+  if [[ ! -d $build_dir ]]; then
+    mkdir $project_root/$build_dir
   fi
   # go to build directory if not already there
   local current_dir=$(basename `pwd`)
@@ -30,16 +31,47 @@ function build {
   cd $project_root
 }
 
-function run {
-  # go to where the binary is
-  cd ${project_root}/${build_dir}/src
-  ./$project_name $1
+function build-dbg {
+  build_dir="debug"
+  if [[ ! -d $build_dir ]]; then
+    mkdir $project_root/$build_dir
+  fi
+  local current_dir=$(basename `pwd`)
+  if [[ current_dir != $build_dir ]]; then
+    cd $build_dir
+  fi
+  cmake -DCMAKE_BUILD_TYPE=Debug ..
+  # -DCMAKE_BUILD_TYPE=RelWithDebInfo
+  make
   cd $project_root
 }
 
-# function debug {
-#   # use gdb to debug
-# }
+function run {
+  echo "running ${build_dir}"
+  # go to where the binary is
+  cd $project_root
+  ./${build_dir}/src/${project_name} $*
+}
+
+function debug {
+  build_dir="debug"
+  # using arguments
+  if [[ ! -d $build_dir ]]; then
+    read -p "the debug build is not created, build it now [Y/n]:" choice
+    case $choice in
+      [yY]* ) build-dbg
+        ;;
+      [nN]* ) echo "error: no target"
+        return 1
+        ;;
+      *) build-dbg
+        ;;
+    esac
+  fi
+  gdb --args $project_root/$build_dir/src/$project_name $*
+
+  # gdb --args $project_name $*
+}
 
 echo "test script updated, ready to run :]"
 
