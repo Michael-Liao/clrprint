@@ -46,48 +46,59 @@ Palette::~Palette() {
   // delete [] rgb_table;
 }
 
-void Palette::setRGB (int r, int g, int b) {
-  int xterm_code = rgb2xterm(r,g,b);
+void Palette::setRGB(std::vector<int> rgb) {
+  int xterm_code = rgb2xterm(rgb);
+  setColor(xterm_code);
+}
+
+void Palette::setHSL(std::vector<float> hsl) {
+  std::vector<int> rgb(hsl2rgb(hsl));
+  setRGB(rgb);
+}
+void Palette::setColor(int xterm_code) {
   char command[16] = "tput sgr0";
   sprintf(command,"tput setaf %d", xterm_code);
   system(command);
 }
 
-void Palette::setColor(int c) {
-
-}
-
-int Palette::rgb2xterm(int r, int g, int b) {
+int Palette::rgb2xterm(std::vector<int> rgb) {
   std::vector<float> d; // (squared) distance between input & table
   for (short i = 0; i < 256; i++) {
-    int r_temp = rgb_table[i][0] - r;
-    int g_temp = rgb_table[i][1] - g;
-    int b_temp = rgb_table[i][2] - b;
+    int r_temp = rgb_table[i][0] - rgb[0];
+    int g_temp = rgb_table[i][1] - rgb[1];
+    int b_temp = rgb_table[i][2] - rgb[2];
     d.push_back(std::pow(r_temp,2) + std::pow(g_temp,2) + std::pow(b_temp,2));
   }
   int color_code = std::distance(d.begin(), std::min_element(d.begin(), d.end()));
+  // dbg msg
+#ifdef DEBUG
   printf("color code %d\n", color_code);
+#endif
 
   return color_code;
 }
 
-void Palette::hsl2rgb(float hue, float sat, float light) {
+std::vector<int> Palette::hsl2rgb(std::vector<float> hsl) {
   // `abs` is a function in <cstdlib> which only takes int values
   // `std::abs` is the versatile one
-  float chroma = (1 - std::abs(2*light-1))*sat;
-  int h = floor(hue/60);
+  float chroma = (1 - std::abs(2*hsl[2]-1))*hsl[1];
+  int h = floor(hsl[0]/60);
   float x = chroma*(1 - std::abs(h%2-1));
   float r1, g1, b1; // not ready
+  std::vector<int> rgb(3,0);
   switch (h) {
-    case 0: r1=chroma, g1=x, b1=0;
-    case 1: r1=x, g1=chroma, b1=0;
-    case 2: r1=0, g1=chroma, b1=x;
-    case 3: r1=0, g1=x, b1=chroma;
-    case 4: r1=x, g1=0, b1=chroma;
-    case 5: r1=chroma, g1=0, b1=x;
-    default: r1=0, g1=0, b1=0;
+    case 0: rgb[0]=chroma, g1=x, b1=0; break;
+    case 1: r1=x, g1=chroma, b1=0; break;
+    case 2: r1=0, g1=chroma, b1=x; break;
+    case 3: r1=0, g1=x, b1=chroma; break;
+    case 4: r1=x, g1=0, b1=chroma; break;
+    case 5: r1=chroma, g1=0, b1=x; break;
+    default: r1=0, g1=0, b1=0; break;
   }
-  float m = light - 0.5*chroma;
-  int r = round(r1+m), g= round(g1+m), b = round(b1+m);
+  float m = hsl[2] - 0.5*chroma;
+  rgb[0] = round(255*(r1+m));
+  rgb[1] = round(255*(g1+m));
+  rgb[2] = round(255*(b1+m));
 
+  return rgb;
 }
