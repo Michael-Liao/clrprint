@@ -20,8 +20,10 @@ public:
   Palette ();
   virtual ~Palette ();
 
-  void setRGB (int r, int g, int b);
-  void setColor (int c);
-  int rgb2xterm (int r, int g, int b);
-  void hsl2rgb (float hue, float sat, float light);
+  void setRGB(std::vector<int> rgb);
+  void setHSL(std::vector<float> hsl);
+  void setColor(int xterm_code);
+  int rgb2xterm(std::vector<int> rgb);
+  std::vector<int> hsl2rgb(std::vector<float> hsl);
+
 };
