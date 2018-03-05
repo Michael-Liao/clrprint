@@ -47,10 +47,11 @@ function build-dbg {
 }
 
 function run {
-  echo "running ${build_dir}"
+  printf "running ${build_dir}\n"
+  printf "command: echo \"colorful\" | clrprint %s\n\n" "$*"
   # go to where the binary is
   cd $project_root
-  ./${build_dir}/src/${project_name} $*
+  echo "colorful" | ./${build_dir}/src/${project_name} $*
 }
 
 function debug {

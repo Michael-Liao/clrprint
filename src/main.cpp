@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string> // c++ string class
-#include <cstring> // strcmp
+// #include <cstring> // strcmp
 #include <cmath>
-#include <cstdlib> // atoi
+// #include <cstdlib> // atoi
 #include <boost/program_options.hpp> // program_options
 #include "palette.h"
 
@@ -22,13 +22,6 @@ void conflicting_options(const po::variables_map& vm,
 int main(int argc, char* argv[]) {
 
   Palette palette; // init w/ default constructor
-  // if (argc > 1) {
-  //   if (strcmp(argv[1],"-rgb")==0) {
-  //     palette.setRGB( atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) );
-  //   } else if (strcmp(argv[1],"-raw")==0) {
-  //     palette.setColor( atoi(argv[2]) );
-  //   }
-  // }
   std::vector<int> rgb(3,0);
   std::vector<float> hsl(3,0);
   po::options_description desc("Options");
@@ -37,6 +30,7 @@ int main(int argc, char* argv[]) {
     ("version,v", "show version")
     ("rgb", po::value< std::vector<int> >(&rgb)->multitoken(), "set RGB Values")
     ("hsl", po::value< std::vector<float> >(&hsl)->multitoken(), "set HSL Values")
+    // ("name", po::value< std::string >(), "lookup name to value")
   ;
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -61,6 +55,9 @@ int main(int argc, char* argv[]) {
       cout<<"hsl must be 3 values seperated by white spaces"<<endl;
       return 2;
     }
+  } else if (vm.count("name")) {
+    // std::string name = vm["name"].as<std::string>();
+    // cout<< name <<endl;
   }
 
   string input;

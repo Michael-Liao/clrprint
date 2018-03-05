@@ -4,6 +4,7 @@
 #include <iterator> // std::distance
 #include <cstdlib> // system
 #include <cstdio> // sprintf
+#include <string> // std::string
 
 class Palette {
 private:
@@ -23,6 +24,7 @@ public:
   void setRGB(std::vector<int> rgb);
   void setHSL(std::vector<float> hsl);
   void setColor(int xterm_code);
+  // void setColor(std::string name);
   int rgb2xterm(std::vector<int> rgb);
   std::vector<int> hsl2rgb(std::vector<float> hsl);
 

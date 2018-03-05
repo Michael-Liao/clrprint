@@ -61,6 +61,16 @@ void Palette::setColor(int xterm_code) {
   system(command);
 }
 
+// void setColor(std::string name) {
+//   std::string name_table[] = {
+//     Black, Maroon, Green, Olive, Navy, Purple, Teal, Silver, Grey, Red,
+//     Lime, Yellow, Blue, Fuchsia, Aqua, White, Grey0, NavyBlue, DarkBlue,
+//     Blue3, Blue2, Blue1, DarkGreen, DeepSkyBlue6, DeepSkyBlue5, DeepSkyBlue4,
+//     DodgerBlue3, DodgerBlue2, Green4, SpringGreen4, Turquoise4, DeepSkyBlue3,
+//     DeepSkyBlue2, DodgerBlue1, Green3
+//   };
+// }
+
 int Palette::rgb2xterm(std::vector<int> rgb) {
   std::vector<float> d; // (squared) distance between input & table
   for (short i = 0; i < 256; i++) {
